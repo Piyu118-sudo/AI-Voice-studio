@@ -1,67 +1,116 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 
 type Chunk = {
-    id: string;
-    audio: string;
+  id: string;
+  audio: string;
 };
 
 type Props = {
-    chunks: Chunk[];
+  chunks: Chunk[];
 };
 
 export default function GlobalPlayerBar({ chunks }: Props) {
-    const [index, setIndex] = useState(0);
-    const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [index, setIndex] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [progress, setProgress] = useState(0);
 
-    const play = () => {
-        if (!audioRef.current || chunks.length === 0) return;
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
-        audioRef.current.src = chunks[index].audio;
-        audioRef.current.play();
+  // 🎵 Play current chunk
+  const play = () => {
+    if (!audioRef.current || chunks.length === 0) return;
+
+    audioRef.current.src = chunks[index].audio;
+    audioRef.current.play();
+    setIsPlaying(true);
+  };
+
+  const pause = () => {
+    audioRef.current?.pause();
+    setIsPlaying(false);
+  };
+
+  const next = () => {
+    setIndex((i) => (i < chunks.length - 1 ? i + 1 : i));
+  };
+
+  const prev = () => {
+    setIndex((i) => (i > 0 ? i - 1 : i));
+  };
+
+  // ⏱ Track progress
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const update = () => {
+      const percent = (audio.currentTime / audio.duration) * 100;
+      setProgress(percent || 0);
     };
 
-    const next = () => {
-        setIndex((i) => (i < chunks.length - 1 ? i + 1 : i));
-    };
+    audio.addEventListener("timeupdate", update);
+    return () => audio.removeEventListener("timeupdate", update);
+  }, []);
 
-    const prev = () => {
-        setIndex((i) => (i > 0 ? i - 1 : i));
-    };
+  return (
+    <div className="border-t bg-white px-6 py-3 shadow-sm flex items-center gap-4">
 
-    return (
-        <div className="flex items-center gap-3 p-4 border-t bg-white">
+      {/* Controls */}
+      <div className="flex items-center gap-2">
+        <button
+          onClick={prev}
+          disabled={index === 0}
+          className="px-2 py-1 rounded-md bg-gray-100 hover:bg-gray-200 disabled:opacity-40"
+        >
+          ⏮
+        </button>
 
-            <button
-                onClick={prev}
-                disabled={index === 0}
-                className="px-2 py-1 bg-gray-100 rounded disabled:opacity-50"
-            >
-                Prev
-            </button>
+        {isPlaying ? (
+          <button
+            onClick={pause}
+            className="px-4 py-1.5 rounded-md bg-purple-600 text-white hover:bg-purple-700"
+          >
+            ⏸ Pause
+          </button>
+        ) : (
+          <button
+            onClick={play}
+            className="px-4 py-1.5 rounded-md bg-purple-600 text-white hover:bg-purple-700"
+          >
+            ▶ Play
+          </button>
+        )}
 
-            <button
-                onClick={play}
-                className="px-3 py-1 bg-purple-600 text-white rounded hover:bg-purple-700"
-            >
-                Play
-            </button>
+        <button
+          onClick={next}
+          disabled={index === chunks.length - 1}
+          className="px-2 py-1 rounded-md bg-gray-100 hover:bg-gray-200 disabled:opacity-40"
+        >
+          ⏭
+        </button>
+      </div>
 
-            <button
-                onClick={next}
-                disabled={index === chunks.length - 1}
-                className="px-2 py-1 bg-gray-100 rounded disabled:opacity-50"
-            >
-                Next
-            </button>
-
-            <span className="text-sm text-gray-500">
-                {chunks.length > 0 ? `Chunk ${index + 1} / ${chunks.length}` : "No audio"}
-            </span>
-
-            <audio ref={audioRef} />
-
+      {/* Progress bar */}
+      <div className="flex-1">
+        <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+          <div
+            className="h-full bg-purple-500 transition-all"
+            style={{ width: `${progress}%` }}
+          />
         </div>
-    );
+      </div>
+
+      {/* Info */}
+      <div className="text-sm text-gray-600 whitespace-nowrap">
+        {chunks.length > 0
+          ? `Chunk ${index + 1} / ${chunks.length}`
+          : "No audio"}
+      </div>
+
+      {/* Hidden audio */}
+      <audio ref={audioRef} />
+    </div>
+  );
 }
