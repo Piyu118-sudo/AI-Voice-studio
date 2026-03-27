@@ -4,7 +4,7 @@ import { useState } from "react";
 import ScriptEditor from "./ScriptEditor";
 import GenerateToolbar from "./GenerateToolbar";
 import ExportToolbar from "./ExportToolbar";
-import ChunksContainer from "./ChunksContainer";
+import ChunksContainer from "../ChunkContainer";
 
 export default function MainWorkspace() {
   const [isGenerating, setIsGenerating] = useState(false);
