@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
 
@@ -16,7 +17,7 @@ export async function POST(req: Request) {
             );
         }
 
-        
+
         const response = await openai.audio.speech.create({
             model: "gpt-4o-mini-tts",
             voice: "alloy",
