@@ -1,27 +1,22 @@
 "use client";
 
-import Sidebar from "./sidebar/Sidebar";
-import MainWorkspace from "./MainWorkspace/MainWorkspace";
+import { useEffect } from "react";
+import { useProjectStore } from "@/store/useProjectStore";
 
-type Props = {
-    children: React.ReactNode;
-};
+export default function Page() {
+    const chunks = useProjectStore((s) => s.chunks);
+    const script = useProjectStore((s) => s.script);
 
-export default function AppLayout({ children }: Props) {
+    useEffect(() => {
+        localStorage.setItem(
+            "ai-voice-project",
+            JSON.stringify({ script, chunks })
+        );
+    }, [script, chunks]);
+
     return (
-        <div className="flex h-screen overflow-hidden">
-
-            
-            <div className="w-64 bg-gray-900 text-white flex flex-col">
-                <Sidebar />
-            </div>
-
-            
-            <div className="flex-1 bg-gray-50 p-6 overflow-y-auto">
-                <MainWorkspace />
-                {children}
-            </div>
-
+        <div>
+           
         </div>
     );
 }

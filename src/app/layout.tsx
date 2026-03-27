@@ -1,18 +1,30 @@
-import "./globals.css";
-import AppLayout from "./AppLayout/appLayout"; // ✅ use absolute path
+"use client";
 
-export default function RootLayout({
-    children,
-}: {
-    children: React.ReactNode;
-}) {
+import { ReactNode } from "react";
+
+type Props = {
+    children: ReactNode;
+};
+
+export default function AppLayout({ children }: Props) {
     return (
-        <html lang="en">
-            <body>
-                <AppLayout>
+        <div className="flex h-screen">
+
+            {/* Sidebar */}
+            {/* <Sidebar /> */}
+
+            {/* Main */}
+            <div className="flex-1 flex flex-col">
+
+                {/* Navbar */}
+                {/* <Navbar /> */}
+
+                {/* Page Content */}
+                <main className="flex-1 overflow-y-auto">
                     {children}
-                </AppLayout>
-            </body>
-        </html>
+                </main>
+
+            </div>
+        </div>
     );
 }

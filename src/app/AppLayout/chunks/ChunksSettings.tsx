@@ -4,7 +4,7 @@ import { useProjectStore } from "@/store/useProjectStore";
 
 type Props = {
   id: string;
-  mood: string;
+  mood: "Neutral" | "Happy" | "Sad";
   model: string;
 };
 
@@ -26,20 +26,22 @@ export default function ChunkSettings({ id, mood, model }: Props) {
         <option>Nova</option>
       </select>
 
-      
+  
       <select
         value={mood}
         onChange={(e) =>
-          updateChunk(id, { mood: e.target.value })
+          updateChunk(id, {
+            mood: e.target.value as "Neutral" | "Happy" | "Sad",
+          })
         }
         className="border rounded px-2 py-1 text-sm"
       >
-        <option>Sad</option>
         <option>Neutral</option>
         <option>Happy</option>
+        <option>Sad</option>
       </select>
 
-      
+     
       <select className="border rounded px-2 py-1 text-sm">
         <option>No pause</option>
         <option>0.5s</option>
