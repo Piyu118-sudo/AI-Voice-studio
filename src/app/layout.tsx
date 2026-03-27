@@ -1,3 +1,4 @@
+import "./globals.css";
 import Sidebar from "./AppLayout/sidebar/Sidebar";
 import { Navbar } from "./Navbar/navbar";
 
